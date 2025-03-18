@@ -118,13 +118,24 @@ def gioca_roulette():
             st.error("Non hai più soldi per scommettere! Ripristina il budget per continuare a giocare.")
             importo = 0  # Imposta l'importo a zero (non può scommettere)
         else:
-            # Se ha soldi, mostra l'input per la scommessa
-            importo = st.number_input(
-                "Importo della scommessa (€)",  # Etichetta
-                min_value=1,  # Non può scommettere meno di 1€
-                max_value=st.session_state.saldo,  # Non può scommettere più di quanto possiede
-                value=min(10, st.session_state.saldo)  # Valore predefinito: 10€ o meno se non ha abbastanza
+            # Se ha soldi, mostra l'input per la scommessa con un semplice campo di testo
+            importo_testo = st.text_input(
+                "Importo della scommessa (€):",
+                value="10"
             )
+            
+            # Convertiamo il testo in numero, con validazione
+            try:
+                importo = int(importo_testo)
+                if importo < 1:
+                    st.warning("L'importo minimo è 1€")
+                    importo = 1
+                elif importo > st.session_state.saldo:
+                    st.warning(f"Non puoi scommettere più di {st.session_state.saldo}€")
+                    importo = st.session_state.saldo
+            except ValueError:
+                st.error("Inserisci un numero valido")
+                importo = 10
         
         # Opzioni di scommessa disponibili nella roulette
         opzioni_scommessa = [
